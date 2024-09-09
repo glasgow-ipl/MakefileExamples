@@ -14,7 +14,7 @@ combined_outputs.txt: $(INTERMEDIATE_STAGE_FILES)
 
 #RULE 2:
 #note that this is not a pattern rule - this is two variables with substitution references
-#both pattern rules and substitution refences in variables use the % symbol, but are not the same thing
+#both pattern rules and substitution references in variables use the % symbol, but are not the same thing
 #both commands are run in one rule, when these should be split into two separate stages with different rules since they both generate outputs
 #hardcoded filepaths should not be added in the commands being run, since this leads to the Makefile not actually tracking the presence of inputs/outputs
 #inputs and outputs should not all be using the target value ($@) - this was used here because the dependency value doesn't change in this current setup
