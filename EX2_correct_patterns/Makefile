@@ -9,6 +9,10 @@ OUTPUT_FRAGMENTS=$(INTERMEDIATE_STAGE_FILES:intermediate_stage/%=outputs/%)
 #easy to run from command line - just type 'make'
 #this has the file 'combined_outputs.txt' as a dependency
 #the target is 'all', but no file named 'all' will be created since make knows this is a standard inbuilt phony target
+#   Correction: The file named `all` is not created because there is no 
+#   recipe to do so in this rule. Adding a .PHONY target will tell make
+#   that the target *shouldn't* be created; it says nothing about whether
+#   the target *is* created by the recipe.
 all: combined_outputs.txt
 
 #rule 1:
@@ -30,6 +34,11 @@ combined_outputs.txt: $(OUTPUT_FRAGMENTS) $(INTERMEDIATE_STAGE_FILES)
 #this python script will be called for each of these files in turn
 # $^ is shorthand for the first dependency
 # $@ is shorthand for the target
+#
+# This would be better if it included the Python script as a dependency,
+# so the target is rebuilt if the script is changed:
+#   outputs/%: scripts/add_even_more_words.py intermediate_stage/%
+#     python3 $^ > $@
 outputs/%: intermediate_stage/%
 	python3 scripts/add_even_more_words.py $^ > $@
 
@@ -38,6 +47,8 @@ outputs/%: intermediate_stage/%
 #writing this rule as $(INPUT_FILES): $(INTERMEDIATE_STAGE FILES) doesn't work because $(INPUT_FILES) is a long list of filenames (uses the wildcard operator in the variable declaration)
 #the first dependency always remains the same if $(INPUT_FILES) is given as a dependency
 #using a pattern rule like this means the filenames are mapped to each other correctly, in sequence
+#
+# As above, this should include the Python script as a dependency.
 intermediate_stage/%: inputs/%
 	python3 scripts/add_words.py $^ > $@
 
